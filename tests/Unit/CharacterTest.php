@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use Modules\RickAndMorty\src\Api\Character;
+use Modules\RickAndMorty\src\Enums\Status;
 use Modules\RickAndMorty\src\Exceptions\NotFoundException;
 use Tests\TestCase;
 
@@ -48,6 +49,22 @@ class CharacterTest extends TestCase
             ->get();
 
         $this->assertIsNotObject($characters);
+    }
+
+    public function it_can_filter_out_all_alive_ricks()
+    {
+        try {
+            $aliveRicks = (new Character())
+                ->withName('Rick')
+                ->withStatus(Status::Alive)
+                ->get();
+        } catch (NotFoundException) {
+            $aliveRicks = null;
+        }
+
+        $this->assertIsObject($aliveRicks);
+        $this->assertIsArray($aliveRicks->results);
+        $this->assertEquals('Rick Sanchez',$aliveRicks->results[0]->name);
     }
 
 }
